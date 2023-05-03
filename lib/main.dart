@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:http/http.dart' as http;
 
 import 'data.dart';
@@ -14,7 +15,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: "Drink", home: HomeScreenBody());
+    return const MaterialApp(
+        title: "Drink",
+        debugShowCheckedModeBanner: false,
+        home: HomeScreenBody());
   }
 }
 
@@ -50,22 +54,51 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
         body: FutureBuilder<CategoryWiseDrinks>(
             future: categoryWiseDrinks,
             builder: (context, snapshot) {
-              return Center(child: firstCardListWrapper());
+              return firstCardListWrapper(snapshot);
             }));
   }
 }
 
-Widget firstCardListWrapper(AsyncSnapshot<CategoryWiseDrinks> data){
-    late Widget child;
-    if(data.hasData){
-      child = FirstCardList(data.data!);
-    }else{
-      child = const CircularProgressIndicator();
-    }
+Widget firstCardListWrapper(AsyncSnapshot<CategoryWiseDrinks> data) {
+  late Widget child;
+  if (data.hasData) {
+    child = firstCardList(data.data!);
+  } else {
+    child = const CircularProgressIndicator();
+  }
 
-    return Center(child: child);
+  return child;
 }
 
-Widget FirstCardList(CategoryWiseDrinks categoryWiseDrinks){
-    return Card(child: Image(image: Image.network(categoryWiseDrinks.drinks)))
+Widget firstCardList(CategoryWiseDrinks categoryWiseDrinks) {
+  var list = categoryWiseDrinks.drinks;
+
+  return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemBuilder: (context, index) {
+        return Wrap(
+          children:[Card(
+              margin: const EdgeInsets.all(16),
+              elevation: 5,
+              clipBehavior: Clip.antiAliasWithSaveLayer,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16.0),
+              ),
+              child: Stack(children: [
+                Image.network(list![index].strDrinkThumb!,
+                    width: MediaQuery.of(context).size.width - 30,
+                    height: MediaQuery.of(context).size.width,
+                fit: BoxFit.fill),
+                Positioned(
+                    left: 16,
+                    right: 16,
+                    top: MediaQuery.of(context).size.width - 50,
+                    bottom: 8,
+                    child: Text(list[index].strDrink!,
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold)))
+              ]))],
+        );
+      },
+      itemCount: list?.length);
 }
