@@ -1,9 +1,10 @@
-import 'dart:convert';
-
+import 'package:drink/bloc/CategoryEvent.dart';
+import 'package:drink/extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:http/http.dart' as http;
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'CategoryRepository.dart';
+import 'bloc/categoryBloc.dart';
+import 'bloc/categoryState.dart';
 import 'data.dart';
 
 void main() {
@@ -29,76 +30,91 @@ class HomeScreenBody extends StatefulWidget {
   State<HomeScreenBody> createState() => _HomeScreenBodyState();
 }
 
-Future<CategoryWiseDrinks> fetchCategoryWiseDrinks() async {
-  final response = await http.get(Uri.parse(
-      "https://www.thecocktaildb.com/api/json/v1/1/filter.php?c=${category[0]}"));
-  if (response.statusCode == 200) {
-    return CategoryWiseDrinks.fromJson(jsonDecode(response.body));
-  } else {
-    throw Exception("Failed to load");
-  }
-}
-
 class _HomeScreenBodyState extends State<HomeScreenBody> {
-  late Future<CategoryWiseDrinks> categoryWiseDrinks;
+  CategoryBloc categoryBloc = CategoryBloc(CategoryRepository());
 
   @override
   void initState() {
     super.initState();
-    categoryWiseDrinks = fetchCategoryWiseDrinks();
+    categoryBloc.add(CategoryLoadEvent());
+  }
+
+  @override
+  void dispose() {
+    categoryBloc.close();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: FutureBuilder<CategoryWiseDrinks>(
-            future: categoryWiseDrinks,
-            builder: (context, snapshot) {
-              return firstCardListWrapper(snapshot);
-            }));
+        body: BlocProvider(
+            create: (context) => CategoryBloc(CategoryRepository()),
+            child: BlocBuilder<CategoryBloc, CategoryState>(
+                builder: (context, state) {
+              // categoryBloc = BlocProvider.of<CategoryBloc>(context);
+                  print(state.toString());
+              if (state is CategoryLoadingState) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is CategoryLoadedState) {
+                print("category loaed state ${state.categoryWiseDrink.length}");
+                return ListView(
+                    children:
+                        firstCardListWrapper(state.categoryWiseDrink, context)
+                            .insertBetweenAll(const SizedBox(height: 20)));
+              } else if (state is CategoryErrorState) {
+                return Center(child: Text(state.error));
+              } else {
+                return Container();
+              }
+            })));
   }
 }
 
-Widget firstCardListWrapper(AsyncSnapshot<CategoryWiseDrinks> data) {
-  late Widget child;
-  if (data.hasData) {
-    child = firstCardList(data.data!);
-  } else {
-    child = const CircularProgressIndicator();
+List<Widget> firstCardListWrapper(
+    List<CategoryWiseDrinks> data, BuildContext context) {
+  List<Widget> child = <Widget>[];
+  for (var element in data) {
+    child.add(firstCardList(element, context));
   }
-
   return child;
 }
 
-Widget firstCardList(CategoryWiseDrinks categoryWiseDrinks) {
+Widget firstCardList(
+    CategoryWiseDrinks categoryWiseDrinks, BuildContext context) {
   var list = categoryWiseDrinks.drinks;
 
-  return ListView.builder(
-      scrollDirection: Axis.horizontal,
-      itemBuilder: (context, index) {
-        return Wrap(
-          children:[Card(
-              margin: const EdgeInsets.all(16),
-              elevation: 5,
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-              child: Stack(children: [
-                Image.network(list![index].strDrinkThumb!,
-                    width: MediaQuery.of(context).size.width - 30,
-                    height: MediaQuery.of(context).size.width,
-                fit: BoxFit.fill),
-                Positioned(
-                    left: 16,
-                    right: 16,
-                    top: MediaQuery.of(context).size.width - 50,
-                    bottom: 8,
-                    child: Text(list[index].strDrink!,
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold)))
-              ]))],
-        );
-      },
-      itemCount: list?.length);
+  return SizedBox(
+    height: MediaQuery.of(context).size.width + 18,
+    child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemBuilder: (context, index) {
+          return Wrap(
+            children: [
+              Card(
+                  margin: const EdgeInsets.all(16),
+                  elevation: 5,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
+                  child: Stack(children: [
+                    Image.network(list![index].strDrinkThumb!,
+                        width: MediaQuery.of(context).size.width - 30,
+                        height: MediaQuery.of(context).size.width,
+                        fit: BoxFit.fill),
+                    Positioned(
+                        left: 16,
+                        right: 16,
+                        top: MediaQuery.of(context).size.width - 50,
+                        bottom: 8,
+                        child: Text(list[index].strDrink!,
+                            style: const TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold)))
+                  ]))
+            ],
+          );
+        },
+        itemCount: list?.take(3).length),
+  );
 }

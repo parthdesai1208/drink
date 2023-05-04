@@ -1,7 +1,9 @@
 
+import 'package:equatable/equatable.dart';
+
 var category = ["Ordinary Drink","Cocktail","Shake","Other / Unknown","Cocoa","Shot","Coffee / Tea","Homemade Liqueur","Punch / Party Drink","Beer","Soft Drink"];
 
-class CategoryWiseDrinks {
+class CategoryWiseDrinks with EquatableMixin {
   List<Drinks>? drinks;
 
   CategoryWiseDrinks({this.drinks});
@@ -22,9 +24,12 @@ class CategoryWiseDrinks {
     }
     return data;
   }
+
+  @override
+  List<Object?> get props => [drinks];
 }
 
-class Drinks {
+class Drinks with EquatableMixin{
   String? strDrink;
   String? strDrinkThumb;
   String? idDrink;
@@ -44,4 +49,7 @@ class Drinks {
     data['idDrink'] = idDrink;
     return data;
   }
+
+  @override
+  List<Object?> get props => [strDrink,strDrinkThumb,idDrink];
 }
