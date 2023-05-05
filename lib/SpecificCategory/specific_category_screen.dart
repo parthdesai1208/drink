@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../SpecificDrink/SpecificDrinkScreen.dart';
 import '../data.dart';
 
 class SpecificCategoryScreen extends StatelessWidget {
@@ -73,33 +74,42 @@ Widget itemCard(Drinks drinks, BuildContext context) {
       children: [
         Column(
           children: [
-            Card(
-                elevation: 5,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Image.network(
-                  drinks.strDrinkThumb!,
-                  fit: BoxFit.fill,
-                  width: MediaQuery.of(context).size.width / 2,
-                  height: MediaQuery.of(context).size.height / 3,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) {
-                      return child;
-                    }
-                    return SizedBox(
-                        width: MediaQuery.of(context).size.width / 2,
-                        height: MediaQuery.of(context).size.height / 3,
-                        child: Center(
-                            child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes !=
-                                        null
-                                    ? loadingProgress.cumulativeBytesLoaded /
-                                        loadingProgress.expectedTotalBytes!
-                                    : null)));
-                  },
-                )),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            SpecificDrinkScreen(drinkId: drinks.idDrink!)));
+              },
+              child: Card(
+                  elevation: 5,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  child: Image.network(
+                    drinks.strDrinkThumb!,
+                    fit: BoxFit.fill,
+                    width: MediaQuery.of(context).size.width / 2,
+                    height: MediaQuery.of(context).size.height / 3,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child;
+                      }
+                      return SizedBox(
+                          width: MediaQuery.of(context).size.width / 2,
+                          height: MediaQuery.of(context).size.height / 3,
+                          child: Center(
+                              child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes !=
+                                          null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null)));
+                    },
+                  )),
+            ),
             Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,

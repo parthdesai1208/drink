@@ -5,7 +5,7 @@ import '../SpecificCategory/specific_category_screen.dart';
 import 'CategoryRepository.dart';
 import '../data.dart';
 import 'bloc/CategoryEvent.dart';
-import 'bloc/categoryBloc.dart';
+import 'bloc/CategoryBloc.dart';
 import 'bloc/categoryState.dart';
 
 void main() {
