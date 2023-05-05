@@ -5,15 +5,19 @@ var category = ["Ordinary Drink","Cocktail","Shake","Other / Unknown","Cocoa","S
 
 class CategoryWiseDrinks with EquatableMixin {
   List<Drinks>? drinks;
+  String category = "";
 
-  CategoryWiseDrinks({this.drinks});
+  CategoryWiseDrinks({this.drinks,required this.category});
 
-  CategoryWiseDrinks.fromJson(Map<String, dynamic> json) {
+  CategoryWiseDrinks.fromJson(Map<String, dynamic> json, {required String category}) {
     if (json['drinks'] != null) {
       drinks = <Drinks>[];
       json['drinks'].forEach((v) {
         drinks!.add(Drinks.fromJson(v));
       });
+    }
+    if(category.isNotEmpty){
+      this.category = category;
     }
   }
 

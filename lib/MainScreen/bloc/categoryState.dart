@@ -1,5 +1,6 @@
 
-import '../data.dart';
+import '../../data.dart';
+
 import 'package:equatable/equatable.dart';
 
 
