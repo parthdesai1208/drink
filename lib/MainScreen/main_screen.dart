@@ -118,7 +118,24 @@ Widget horizontalCardList(
                         Image.network(list![index].strDrinkThumb!,
                             width: MediaQuery.of(context).size.width - 30,
                             height: MediaQuery.of(context).size.width,
-                            fit: BoxFit.fill),
+                            fit: BoxFit.fill,
+                            loadingBuilder: (context, child, loadingProgress) {
+                          if (loadingProgress == null) {
+                            return child;
+                          }
+                          return SizedBox(
+                            width: MediaQuery.of(context).size.width - 30,
+                            height: MediaQuery.of(context).size.width,
+                            child: Center(
+                                child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null)),
+                          );
+                        }),
                         Positioned(
                             left: 16,
                             right: 16,
