@@ -124,29 +124,29 @@ Widget drinkScreen(DrinkClass drinkClass, BuildContext context) {
       Positioned(
           left: 16,
           top: 36,
-          child: Ink(
-              decoration: const ShapeDecoration(
-                  color: Colors.red, shape: CircleBorder()),
-              child: IconButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.close, size: 32))))
+          child: Container(decoration: const ShapeDecoration(color: Colors.grey,shape: CircleBorder()),
+            child: IconButton(padding: const EdgeInsets.all(0),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.close, size: 32)),
+          ))
     ]),
-    Container(
-      color: Colors.green,
-      child: const Padding(
-        padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
-        child: Text("Ingredients",
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-      ),
+    const Padding(
+      padding: EdgeInsets.fromLTRB(16, 16, 0, 0),
+      child: Text("Ingredients",
+          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
     ),
-    ListView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return Text(ingredientList[index]);
-        },
-        itemCount: ingredientList.length),
+    Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+      child: ListView.builder(
+          padding: EdgeInsets.zero,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemBuilder: (context, index) {
+            return Text(ingredientList[index]);
+          },
+          itemCount: ingredientList.length),
+    )
   ]);
 }
