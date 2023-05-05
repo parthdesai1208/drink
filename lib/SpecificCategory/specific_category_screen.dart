@@ -43,20 +43,18 @@ class _SpecificCategoryScreenBodyState
     var heightRatio = MediaQuery.of(context).size.height / 2;
     var aspectRatio = widthRatio / heightRatio;
 
-    return LayoutBuilder(
-      builder: (contextBuilder, constraint) {
-        return GridView.builder(
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: constraint.maxWidth > 700 ? 4 : 2,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 5,
-                childAspectRatio: aspectRatio),
-            itemCount: list!.length,
-            itemBuilder: (context, index) {
-              return itemCard(list[index], context);
-            });
-      }
-    );
+    return LayoutBuilder(builder: (contextBuilder, constraint) {
+      return GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: constraint.maxWidth > 700 ? 4 : 2,
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 5,
+              childAspectRatio: aspectRatio),
+          itemCount: list!.length,
+          itemBuilder: (context, index) {
+            return itemCard(list[index], context);
+          });
+    });
   }
 }
 
@@ -84,8 +82,23 @@ Widget itemCard(Drinks drinks, BuildContext context) {
                 child: Image.network(
                   drinks.strDrinkThumb!,
                   fit: BoxFit.fill,
-                  // width: MediaQuery.of(context).size.width / 2,
+                  width: MediaQuery.of(context).size.width / 2,
                   height: MediaQuery.of(context).size.height / 3,
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) {
+                      return child;
+                    }
+                    return SizedBox(
+                        width: MediaQuery.of(context).size.width / 2,
+                        height: MediaQuery.of(context).size.height / 3,
+                        child: Center(
+                            child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes !=
+                                        null
+                                    ? loadingProgress.cumulativeBytesLoaded /
+                                        loadingProgress.expectedTotalBytes!
+                                    : null)));
+                  },
                 )),
             Row(
               mainAxisSize: MainAxisSize.max,
