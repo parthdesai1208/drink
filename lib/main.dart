@@ -31,43 +31,31 @@ class HomeScreenBody extends StatefulWidget {
 }
 
 class _HomeScreenBodyState extends State<HomeScreenBody> {
-  CategoryBloc categoryBloc = CategoryBloc(CategoryRepository());
-
-  @override
-  void initState() {
-    super.initState();
-    categoryBloc.add(CategoryLoadEvent());
-  }
-
-  @override
-  void dispose() {
-    categoryBloc.close();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: BlocProvider(
-            create: (context) => CategoryBloc(CategoryRepository()),
-            child: BlocBuilder<CategoryBloc, CategoryState>(
-                builder: (context, state) {
-              // categoryBloc = BlocProvider.of<CategoryBloc>(context);
-                  print(state.toString());
+
+    return MultiBlocProvider(providers: [
+      BlocProvider<CategoryBloc>(
+        create: (BuildContext context) => CategoryBloc(CategoryRepository()),
+      ),
+    ], child: Scaffold(body: BlocProvider(
+        create: (context) => CategoryBloc(CategoryRepository())..add(CategoryLoadEvent()),
+        child: BlocBuilder<CategoryBloc, CategoryState>(
+            builder: (context, state) {
               if (state is CategoryLoadingState) {
                 return const Center(child: CircularProgressIndicator());
               } else if (state is CategoryLoadedState) {
-                print("category loaed state ${state.categoryWiseDrink.length}");
                 return ListView(
                     children:
-                        firstCardListWrapper(state.categoryWiseDrink, context)
-                            .insertBetweenAll(const SizedBox(height: 20)));
+                    firstCardListWrapper(state.categoryWiseDrink, context)
+                        .insertBetweenAll(const SizedBox(height: 20)));
               } else if (state is CategoryErrorState) {
                 return Center(child: Text(state.error));
               } else {
                 return Container();
               }
-            })));
+            }))));
   }
 }
 

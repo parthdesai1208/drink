@@ -3,20 +3,13 @@ import '../data.dart';
 import 'package:equatable/equatable.dart';
 
 
- class CategoryState{
-   final bool value;
+abstract class CategoryState{}
 
-   CategoryState({this.value=false});
- }
+class CategoryLoadingState extends CategoryState{}
 
-class CategoryLoadingState extends CategoryState{
-
-}
-
-class CategoryLoadedState extends CategoryState {
-  final bool isLoaded;
+class CategoryLoadedState extends CategoryState with EquatableMixin {
    final List<CategoryWiseDrinks> categoryWiseDrink;
-   CategoryLoadedState(this.categoryWiseDrink,this.isLoaded):super(value: true);
+   CategoryLoadedState(this.categoryWiseDrink);
 
   @override
   List<Object?> get props => [categoryWiseDrink];

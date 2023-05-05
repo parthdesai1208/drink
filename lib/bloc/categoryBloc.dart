@@ -6,19 +6,20 @@ import 'categoryState.dart';
 class CategoryBloc extends Bloc<CategoryEvent,CategoryState>{
     final CategoryRepository categoryRepository;
 
-    CategoryBloc(this.categoryRepository) : super(CategoryState()){
+    CategoryBloc(this.categoryRepository) : super(CategoryLoadingState()){
       on<CategoryLoadEvent>(_onCategoryLoadEvent);
     }
 
-    void _onCategoryLoadEvent(CategoryLoadEvent event,Emitter<CategoryState> emit)async{
-      emit(CategoryLoadedState([],false));
-      // try{
-      //   final category = await categoryRepository.fetchCategoryWiseDrinks();
-      //   if(category.isNotEmpty){
-      //     emit(CategoryLoadedState(category,true));
-      //   }
-      // }catch(e){
-      //   emit(CategoryErrorState(e.toString()));
-      // }
+    void _onCategoryLoadEvent(CategoryLoadEvent event,Emitter<CategoryState> emit) async {
+      try{
+        final categoryList = await categoryRepository.fetchCategoryWiseDrinks();
+        if(categoryList.isNotEmpty){
+          emit(CategoryLoadedState(categoryList));
+        }else{
+          emit(CategoryLoadingState());
+        }
+      }catch(e){
+        emit(CategoryErrorState(e.toString()));
+      }
     }
 }
