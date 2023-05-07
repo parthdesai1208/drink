@@ -93,55 +93,62 @@ Widget horizontalCardList(
                   const Text("View All", style: TextStyle(color: Colors.grey)))
         ]),
       ),
-      SizedBox(
-        height: MediaQuery.of(context).size.width + 18,
-        child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) {
-              return Wrap(
-                children: [
-                  Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      elevation: 5,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: Stack(children: [
-                        Image.network(list![index].strDrinkThumb!,
-                            width: MediaQuery.of(context).size.width - 30,
-                            height: MediaQuery.of(context).size.width,
-                            fit: BoxFit.fill,
-                            loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
-                          }
-                          return SizedBox(
-                            width: MediaQuery.of(context).size.width - 30,
-                            height: MediaQuery.of(context).size.width,
-                            child: Center(
-                                child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress
+      LayoutBuilder(
+        builder:(contextBuilder, constraint) {
+          var sizedBoxHeight = constraint.maxWidth > 700 ? MediaQuery.of(context).size.width / 3 : MediaQuery.of(context).size.width + 18;
+          var imageWidth = constraint.maxWidth > 700 ? MediaQuery.of(context).size.width / 3.25 : MediaQuery.of(context).size.width - 30;
+          var imageHeight = constraint.maxWidth > 700 ? MediaQuery.of(context).size.width / 3.25 : MediaQuery.of(context).size.width;
+          return SizedBox(
+            height: sizedBoxHeight,
+            child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  return Wrap(
+                    children: [
+                      Card(
+                          margin: const EdgeInsets.symmetric(horizontal: 16),
+                          elevation: 5,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16.0),
+                          ),
+                          child: Stack(children: [
+                            Image.network(list![index].strDrinkThumb!,
+                                width: imageWidth,
+                                height: imageHeight,
+                                fit: BoxFit.fill,
+                                loadingBuilder: (context, child, loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  }
+                                  return SizedBox(
+                                    width: imageWidth,
+                                    height: imageHeight,
+                                    child: Center(
+                                        child: CircularProgressIndicator(
+                                            value: loadingProgress.expectedTotalBytes !=
+                                                null
+                                                ? loadingProgress
                                                 .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null)),
-                          );
-                        }),
-                        Positioned(
-                            left: 16,
-                            right: 16,
-                            top: MediaQuery.of(context).size.width - 50,
-                            bottom: 8,
-                            child: Text(list[index].strDrink!,
-                                style: const TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.bold)))
-                      ]))
-                ],
-              );
-            },
-            itemCount: list?.take(3).length),
+                                                loadingProgress.expectedTotalBytes!
+                                                : null)),
+                                  );
+                                }),
+                            Positioned(
+                                left: 16,
+                                right: 16,
+                                top: MediaQuery.of(context).size.width - 50,
+                                bottom: 8,
+                                child: Text(list[index].strDrink!,
+                                    style: const TextStyle(
+                                        fontSize: 24, fontWeight: FontWeight.bold)))
+                          ]))
+                    ],
+                  );
+                },
+                itemCount: list?.take(3).length),
+          );
+        },
       ),
     ],
   );
