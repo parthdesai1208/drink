@@ -34,35 +34,28 @@ class HomeScreenBody extends StatefulWidget {
 class _HomeScreenBodyState extends State<HomeScreenBody> {
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<CategoryBloc>(
-            create: (BuildContext context) =>
-                CategoryBloc(CategoryRepository()),
-          ),
-        ],
-        child: Scaffold(
-            body: BlocProvider(
-                create: (context) => CategoryBloc(CategoryRepository())
-                  ..add(CategoryLoadEvent()),
-                child: BlocBuilder<CategoryBloc, CategoryState>(
-                    builder: (context, state) {
-                  if (state is CategoryLoadingState) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is CategoryLoadedState) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 10.0),
-                      child: ListView(
-                          children: commonCardListWrapper(
-                                  state.categoryWiseDrink, context)
-                              .insertBetweenAll(const SizedBox(height: 20))),
-                    );
-                  } else if (state is CategoryErrorState) {
-                    return Center(child: Text(state.error));
-                  } else {
-                    return Container();
-                  }
-                }))));
+    return Scaffold(
+        body: BlocProvider(
+            create: (context) => CategoryBloc(CategoryRepository())
+              ..add(CategoryLoadEvent()),
+            child: BlocBuilder<CategoryBloc, CategoryState>(
+                builder: (context, state) {
+              if (state is CategoryLoadingState) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is CategoryLoadedState) {
+                return Padding(
+                  padding: const EdgeInsets.only(top: 10.0),
+                  child: ListView(
+                      children: commonCardListWrapper(
+                              state.categoryWiseDrink, context)
+                          .insertBetweenAll(const SizedBox(height: 20))),
+                );
+              } else if (state is CategoryErrorState) {
+                return Center(child: Text(state.error));
+              } else {
+                return Container();
+              }
+            })));
   }
 }
 
