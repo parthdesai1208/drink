@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../SpecificDrink/SpecificDrinkScreen.dart';
 import '../data.dart';
 
@@ -40,34 +39,50 @@ class _SpecificCategoryScreenBodyState
   @override
   Widget build(BuildContext context) {
     var list = widget.categoryWiseDrinks.drinks;
-    var widthRatio = MediaQuery.of(context).size.width / 1.5;
-    var heightRatio = MediaQuery.of(context).size.height / 2;
-    var aspectRatio = widthRatio / heightRatio;
 
     return LayoutBuilder(builder: (contextBuilder, constraint) {
+      var columnCount = 0;
+      var widthRatio = 0.0;
+      var heightRatio = 0.0;
+      var imageWidth = 0.0;
+      var imageHeight = 0.0;
+      if(constraint.maxWidth >= 1000){ //desktop,web
+        columnCount = 4;
+        widthRatio = MediaQuery.of(context).size.width / 2.3;
+        heightRatio = MediaQuery.of(context).size.height;
+        imageWidth = MediaQuery.of(context).size.width / 4;
+        imageHeight = MediaQuery.of(context).size.height / 2;
+      }else if(constraint.maxWidth < 1440 && constraint.maxWidth > 480){ //tablet
+        columnCount = 3;
+        widthRatio = MediaQuery.of(context).size.width / 2;
+        heightRatio = MediaQuery.of(context).size.height / 1.5;
+        imageWidth = MediaQuery.of(context).size.width / 3;
+        imageHeight = MediaQuery.of(context).size.height / 2.5;
+      }else{  //mobile
+        columnCount = 2;
+        widthRatio = MediaQuery.of(context).size.width / 1.5;
+        heightRatio = MediaQuery.of(context).size.height / 2;
+        imageWidth = MediaQuery.of(context).size.width / 2;
+        imageHeight = MediaQuery.of(context).size.height / 3;
+      }
+
+      var aspectRatio = widthRatio / heightRatio;
+
       return GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: constraint.maxWidth > 700 ? 4 : 2,
+              crossAxisCount: columnCount,
               mainAxisSpacing: 10,
               crossAxisSpacing: 5,
               childAspectRatio: aspectRatio),
           itemCount: list!.length,
           itemBuilder: (context, index) {
-            return itemCard(list[index], context);
+            return itemCard(drinks: list[index],context:  context,imageWidth: imageWidth,imageHeight: imageHeight);
           });
     });
   }
 }
 
-List<Widget> listOfItemCard(List<Drinks> list, BuildContext context) {
-  List<Widget> widgetList = [];
-  for (var element in list) {
-    widgetList.add(itemCard(element, context));
-  }
-  return widgetList;
-}
-
-Widget itemCard(Drinks drinks, BuildContext context) {
+Widget itemCard({required Drinks drinks, required BuildContext context,required double imageWidth,required double imageHeight}) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Wrap(
@@ -91,15 +106,15 @@ Widget itemCard(Drinks drinks, BuildContext context) {
                   child: Image.network(
                     drinks.strDrinkThumb!,
                     fit: BoxFit.fill,
-                    width: MediaQuery.of(context).size.width / 2,
-                    height: MediaQuery.of(context).size.height / 3,
+                    width: imageWidth,
+                    height: imageHeight,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) {
                         return child;
                       }
                       return SizedBox(
-                          width: MediaQuery.of(context).size.width / 2,
-                          height: MediaQuery.of(context).size.height / 3,
+                          width: imageWidth,
+                          height: imageHeight,
                           child: Center(
                               child: CircularProgressIndicator(
                                   value: loadingProgress.expectedTotalBytes !=
