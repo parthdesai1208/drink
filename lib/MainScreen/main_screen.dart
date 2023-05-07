@@ -95,9 +95,23 @@ Widget horizontalCardList(
       ),
       LayoutBuilder(
         builder:(contextBuilder, constraint) {
-          var sizedBoxHeight = constraint.maxWidth > 700 ? MediaQuery.of(context).size.width / 3 : MediaQuery.of(context).size.width + 18;
-          var imageWidth = constraint.maxWidth > 700 ? MediaQuery.of(context).size.width / 3.25 : MediaQuery.of(context).size.width - 30;
-          var imageHeight = constraint.maxWidth > 700 ? MediaQuery.of(context).size.width / 3.25 : MediaQuery.of(context).size.width;
+          var sizedBoxHeight = 0.0;
+          var imageWidth = 0.0;
+          var imageHeight = 0.0;
+          if(constraint.maxWidth >= 1000){
+            sizedBoxHeight = MediaQuery.of(context).size.width * 0.35;
+            imageWidth = MediaQuery.of(context).size.width * 0.31;
+            imageHeight = MediaQuery.of(context).size.width * 0.31;
+          }else if(constraint.maxWidth < 1440 && constraint.maxWidth > 480){
+            sizedBoxHeight = MediaQuery.of(context).size.width * 0.32;
+            imageWidth = MediaQuery.of(context).size.width * 0.29;
+            imageHeight = MediaQuery.of(context).size.width * 0.32;
+          }else {
+            sizedBoxHeight = MediaQuery.of(context).size.height * 0.57;
+            imageWidth = MediaQuery.of(context).size.width * 0.92;
+            imageHeight = MediaQuery.of(context).size.height * 0.55;
+          }
+
           return SizedBox(
             height: sizedBoxHeight,
             child: ListView.builder(
