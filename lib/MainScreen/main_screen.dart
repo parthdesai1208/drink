@@ -78,19 +78,23 @@ Widget horizontalCardList(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
         child:
             Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(categoryWiseDrinks.category,
-              style:
-                  const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-          TextButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => SpecificCategoryScreen(
-                            categoryWiseDrinks: categoryWiseDrinks)));
-              },
-              child:
-                  const Text("View All", style: TextStyle(color: Colors.grey)))
+          Flexible(flex: 2,
+            child: Text(categoryWiseDrinks.category,overflow: TextOverflow.ellipsis,
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          ),
+          Flexible(flex: 1,
+            child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => SpecificCategoryScreen(
+                              categoryWiseDrinks: categoryWiseDrinks)));
+                },
+                child:
+                    const Text("View All",overflow: TextOverflow.ellipsis, style: TextStyle(color: Colors.grey))),
+          )
         ]),
       ),
       LayoutBuilder(
@@ -151,9 +155,9 @@ Widget horizontalCardList(
                             Positioned(
                                 left: 16,
                                 right: 16,
-                                top: MediaQuery.of(context).size.width - 50,
+                                top: imageHeight - 50,
                                 bottom: 8,
-                                child: Text(list[index].strDrink!,
+                                child: Text(list[index].strDrink!,overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                         fontSize: 24, fontWeight: FontWeight.bold)))
                           ]))
