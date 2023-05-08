@@ -44,7 +44,7 @@ class _HomeScreenBodyState extends State<HomeScreenBody> {
                 return const Center(child: CircularProgressIndicator());
               } else if (state is CategoryLoadedState) {
                 return Padding(
-                  padding: const EdgeInsets.only(top: 10.0),
+                  padding: const EdgeInsets.only(bottom: 16.0),
                   child: ListView(
                       children: commonCardListWrapper(
                               state.categoryWiseDrink, context)
@@ -153,13 +153,22 @@ Widget horizontalCardList(
                                   );
                                 }),
                             Positioned(
-                                left: 16,
-                                right: 16,
+                                left: 8,
+                                right: 8,
                                 top: imageHeight - 50,
                                 bottom: 8,
-                                child: Text(list[index].strDrink!,overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                        fontSize: 24, fontWeight: FontWeight.bold)))
+                                child: Wrap(
+                                  children: [
+                                    Container(decoration: ShapeDecoration(color: Colors.grey.withAlpha(200),shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(8)))),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(3.0),
+                                        child: Text(list[index].strDrink!,overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                                fontSize: 24, fontWeight: FontWeight.bold)),
+                                      ),
+                                    ),
+                                  ],
+                                ))
                           ]))
                     ],
                   );
