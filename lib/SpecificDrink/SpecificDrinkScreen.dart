@@ -32,27 +32,22 @@ class SpecificDrinkScreenBody extends StatefulWidget {
 class _SpecificDrinkScreenBodyState extends State<SpecificDrinkScreenBody> {
   @override
   Widget build(BuildContext context) {
-    return MultiBlocProvider(
-        providers: [
-          BlocProvider<DrinkBloc>(
-              create: (context) => DrinkBloc(DrinkRepository(widget.drinkId)))
-        ],
-        child: Scaffold(
-            body: BlocProvider(
-                create: (context) => DrinkBloc(DrinkRepository(widget.drinkId))
-                  ..add(DrinkLoadEvent()),
-                child: BlocBuilder<DrinkBloc, DrinkState>(
-                    builder: (context, state) {
-                  if (state is DrinkLoadingState) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is DrinkLoadedState) {
-                    return drinkScreen(state.drinkClass, context);
-                  } else if (state is DrinkErrorState) {
-                    return Center(child: Text(state.error));
-                  } else {
-                    return Container();
-                  }
-                }))));
+    return Scaffold(
+        body: BlocProvider(
+            create: (context) => DrinkBloc(DrinkRepository(widget.drinkId))
+              ..add(DrinkLoadEvent()),
+            child: BlocBuilder<DrinkBloc, DrinkState>(
+                builder: (context, state) {
+              if (state is DrinkLoadingState) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is DrinkLoadedState) {
+                return drinkScreen(state.drinkClass, context);
+              } else if (state is DrinkErrorState) {
+                return Center(child: Text(state.error));
+              } else {
+                return Container();
+              }
+            })));
   }
 }
 
