@@ -17,10 +17,12 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return  MaterialApp(
         title: "Drink",
+        theme: ThemeData(brightness: Brightness.light,visualDensity: VisualDensity.adaptivePlatformDensity),
+        darkTheme: ThemeData(brightness: Brightness.dark,visualDensity: VisualDensity.adaptivePlatformDensity),
         debugShowCheckedModeBanner: false,
-        home: HomeScreenBody());
+        home: const HomeScreenBody());
   }
 }
 
