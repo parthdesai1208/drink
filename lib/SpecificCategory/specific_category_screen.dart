@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:responsive_builder/responsive_builder.dart';
 import '../DrinkData.dart' as drink2;
-import '../SpecificDrink/DrinkRepository.dart';
 import '../SpecificDrink/SpecificDrinkScreen.dart';
-import '../SpecificDrink/bloc/DrinkBloc.dart';
-import '../SpecificDrink/bloc/DrinkEvent.dart';
-import '../SpecificDrink/bloc/DrinkState.dart';
 import '../data.dart' as drink1;
 import '../data.dart';
 
@@ -54,19 +49,22 @@ class _SpecificCategoryScreenBodyState
       var heightRatio = 0.0;
       var imageWidth = 0.0;
       var imageHeight = 0.0;
-      if(constraint.maxWidth >= 1000){ //desktop,web
+      if (constraint.maxWidth >= 1000) {
+        //desktop,web
         columnCount = 4;
         widthRatio = MediaQuery.of(context).size.width / 2.3;
         heightRatio = MediaQuery.of(context).size.height;
         imageWidth = MediaQuery.of(context).size.width / 4;
         imageHeight = MediaQuery.of(context).size.height / 2;
-      }else if(constraint.maxWidth < 1440 && constraint.maxWidth > 480){ //tablet
+      } else if (constraint.maxWidth < 1440 && constraint.maxWidth > 480) {
+        //tablet
         columnCount = 3;
         widthRatio = MediaQuery.of(context).size.width / 2;
         heightRatio = MediaQuery.of(context).size.height / 1.5;
         imageWidth = MediaQuery.of(context).size.width / 3;
         imageHeight = MediaQuery.of(context).size.height / 2.5;
-      }else{  //mobile
+      } else {
+        //mobile
         columnCount = 2;
         widthRatio = MediaQuery.of(context).size.width / 1.5;
         heightRatio = MediaQuery.of(context).size.height / 2;
@@ -84,74 +82,82 @@ class _SpecificCategoryScreenBodyState
               childAspectRatio: aspectRatio),
           itemCount: list!.length,
           itemBuilder: (context, index) {
-            return itemCard(drinks: list[index],context:  context,imageWidth: imageWidth,imageHeight: imageHeight,constraint: constraint);
+            return itemCard(
+                drinks: list[index],
+                context: context,
+                imageWidth: imageWidth,
+                imageHeight: imageHeight,
+                constraint: constraint);
           });
     });
   }
 }
 
-Widget itemCard({required Drinks drinks, required BuildContext context,required double imageWidth,required double imageHeight,required BoxConstraints constraint}) {
+Widget itemCard(
+    {required Drinks drinks,
+    required BuildContext context,
+    required double imageWidth,
+    required double imageHeight,
+    required BoxConstraints constraint}) {
   return Padding(
     padding: const EdgeInsets.all(8.0),
     child: Wrap(
       children: [
         Column(
           children: [
-            ResponsiveBuilder(
-              builder: (BuildContext context, SizingInformation sizingInformation) {
-                return GestureDetector(
-                  onTap: () {
-                    if(sizingInformation.deviceScreenType == DeviceScreenType.desktop && sizingInformation.screenSize.width > 1050){
-                      showDialog(context: context,barrierDismissible : false, builder: (context) {
-                        return AlertDialog(contentPadding: EdgeInsets.zero,content: BlocProvider(
-                            create: (context) => DrinkBloc(DrinkRepository(drinks.idDrink!))
-                              ..add(DrinkLoadEvent()),
-                            child: BlocBuilder<DrinkBloc, DrinkState>(
-                                builder: (context, state) {
-                                  if (state is DrinkLoadingState) {
-                                    return  const Center(child: CircularProgressIndicator());
-                                  } else if (state is DrinkLoadedState) {
-                                    return drinkScreenForDialog(state.drinkClass, context);
-                                  } else if (state is DrinkErrorState) {
-                                    return Center(child: Text(state.error));
-                                  } else {
-                                    return Container();
-                                  }
-                                })) );
-                      });
-                    }else{
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => SpecificDrinkScreen(drinkId: drinks.idDrink!)));
-                    }
-                  },
-                  child: Card(
-                      elevation: 5,
-                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Image.network(
-                        drinks.strDrinkThumb!,
-                        fit: BoxFit.fill,
-                        width: imageWidth,
-                        height: imageHeight,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
-                          }
-                          return SizedBox(
-                              width: imageWidth,
-                              height: imageHeight,
-                              child: Center(
-                                  child: CircularProgressIndicator(
-                                      value: loadingProgress.expectedTotalBytes !=
-                                          null
-                                          ? loadingProgress.cumulativeBytesLoaded /
-                                          loadingProgress.expectedTotalBytes!
-                                          : null)));
-                        },
-                      )),
-                );
-              }),
+            ResponsiveBuilder(builder:
+                (BuildContext context, SizingInformation sizingInformation) {
+              return GestureDetector(
+                onTap: () {
+                  if (sizingInformation.deviceScreenType ==
+                          DeviceScreenType.desktop &&
+                      sizingInformation.screenSize.width > 1050) {
+                    showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) {
+                          return AlertDialog(
+                              contentPadding: EdgeInsets.zero,
+                              content: commonBlocProviderForSpecificDrink(drinkId: drinks.idDrink!, isLargerSize: true));
+                        });
+                  } else {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                SpecificDrinkScreen(drinkId: drinks.idDrink!)));
+                  }
+                },
+                child: Card(
+                    elevation: 5,
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    child: Image.network(
+                      drinks.strDrinkThumb!,
+                      fit: BoxFit.fill,
+                      width: imageWidth,
+                      height: imageHeight,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child;
+                        }
+                        return SizedBox(
+                            width: imageWidth,
+                            height: imageHeight,
+                            child: Center(
+                                child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null)));
+                      },
+                    )),
+              );
+            }),
             Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -169,7 +175,8 @@ Widget itemCard({required Drinks drinks, required BuildContext context,required 
   );
 }
 
-Widget drinkScreenForDialog(drink2.DrinkClass drinkClass, BuildContext context) {
+Widget drinkScreenForDialog(
+    drink2.DrinkClass drinkClass, BuildContext context) {
   var ingredientList = [];
   if (drinkClass.drinks![0].strIngredient1 != null) {
     ingredientList.add(drinkClass.drinks![0].strIngredient1);
@@ -217,32 +224,37 @@ Widget drinkScreenForDialog(drink2.DrinkClass drinkClass, BuildContext context) 
     ingredientList.add(drinkClass.drinks![0].strIngredient15);
   }
 
-  return SizedBox(width: MediaQuery.of(context).size.width * 0.25,
+  return SizedBox(
+    width: MediaQuery.of(context).size.width * 0.25,
     height: double.maxFinite,
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Stack(children: [
         Image.network(drinkClass.drinks![0].strDrinkThumb!,
             width: double.maxFinite,
             height: MediaQuery.of(context).size.height / 2,
-            fit: BoxFit.fill, loadingBuilder: (context, child, loadingProgress) {
-              if (loadingProgress == null) {
-                return child;
-              }
-              return SizedBox(
-                  height: MediaQuery.of(context).size.height / 3,
-                  child: Center(
-                      child: CircularProgressIndicator(
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
+            fit: BoxFit.fill,
+            loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) {
+            return child;
+          }
+          return SizedBox(
+              height: MediaQuery.of(context).size.height / 3,
+              child: Center(
+                  child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
                               loadingProgress.expectedTotalBytes!
-                              : null)));
-            }),
+                          : null)));
+        }),
         Positioned(
             right: 16,
             // left: 16,
             top: 16,
-            child: Container(decoration: const ShapeDecoration(color: Colors.grey,shape: CircleBorder()),
-              child: IconButton(padding: const EdgeInsets.all(0),
+            child: Container(
+              decoration: const ShapeDecoration(
+                  color: Colors.grey, shape: CircleBorder()),
+              child: IconButton(
+                  padding: const EdgeInsets.all(0),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -254,7 +266,8 @@ Widget drinkScreenForDialog(drink2.DrinkClass drinkClass, BuildContext context) 
         child: Text("Ingredients",
             style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
       ),
-      Padding(padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
         child: ListView.builder(
             padding: EdgeInsets.zero,
             shrinkWrap: true,

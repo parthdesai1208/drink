@@ -6,6 +6,8 @@ import 'package:drink/SpecificDrink/bloc/DrinkState.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../SpecificCategory/specific_category_screen.dart';
+
 class SpecificDrinkScreen extends StatelessWidget {
   const SpecificDrinkScreen({Key? key, required this.drinkId})
       : super(key: key);
@@ -32,23 +34,30 @@ class SpecificDrinkScreenBody extends StatefulWidget {
 class _SpecificDrinkScreenBodyState extends State<SpecificDrinkScreenBody> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: BlocProvider(
-            create: (context) => DrinkBloc(DrinkRepository(widget.drinkId))
-              ..add(DrinkLoadEvent()),
-            child: BlocBuilder<DrinkBloc, DrinkState>(
-                builder: (context, state) {
-              if (state is DrinkLoadingState) {
-                return const Center(child: CircularProgressIndicator());
-              } else if (state is DrinkLoadedState) {
-                return drinkScreen(state.drinkClass, context);
-              } else if (state is DrinkErrorState) {
-                return Center(child: Text(state.error));
-              } else {
-                return Container();
-              }
-            })));
+    return Scaffold(body: commonBlocProviderForSpecificDrink(drinkId: widget.drinkId,isLargerSize: false));
   }
+}
+
+Widget commonBlocProviderForSpecificDrink({required String drinkId,required bool isLargerSize}){
+  return BlocProvider(
+      create: (context) => DrinkBloc(DrinkRepository(drinkId))
+        ..add(DrinkLoadEvent()),
+      child: BlocBuilder<DrinkBloc, DrinkState>(
+          builder: (context, state) {
+            if (state is DrinkLoadingState) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is DrinkLoadedState) {
+              if(isLargerSize){
+                return drinkScreenForDialog(state.drinkClass,context);
+              }else{
+                return drinkScreen(state.drinkClass, context);
+              }
+            } else if (state is DrinkErrorState) {
+              return Center(child: Text(state.error));
+            } else {
+              return Container();
+            }
+          }));
 }
 
 Widget drinkScreen(DrinkClass drinkClass, BuildContext context) {
