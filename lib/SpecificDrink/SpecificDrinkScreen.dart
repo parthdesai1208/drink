@@ -102,7 +102,8 @@ Widget drinkScreen(DrinkClass drinkClass, BuildContext context) {
   return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
     Stack(children: [
       Image.network(drinkClass.drinks![0].strDrinkThumb!,
-          height: MediaQuery.of(context).size.height / 2,
+          height: MediaQuery.of(context).size.height * 0.50,
+          width: double.maxFinite,
           fit: BoxFit.fill, loadingBuilder: (context, child, loadingProgress) {
         if (loadingProgress == null) {
           return child;
