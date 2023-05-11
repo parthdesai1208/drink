@@ -136,7 +136,7 @@ Widget itemCard(
                     ),
                     child: Image.network(
                       drinks.strDrinkThumb!,
-                      fit: BoxFit.fill,
+                      fit: BoxFit.cover,
                       width: imageWidth,
                       height: imageHeight,
                       loadingBuilder: (context, child, loadingProgress) {
@@ -232,7 +232,7 @@ Widget drinkScreenForDialog(
         Image.network(drinkClass.drinks![0].strDrinkThumb!,
             width: double.maxFinite,
             height: MediaQuery.of(context).size.height / 2,
-            fit: BoxFit.fill,
+            fit: BoxFit.cover,
             loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) {
             return child;

@@ -1,3 +1,4 @@
+
 import 'package:drink/DrinkData.dart';
 import 'package:drink/SpecificDrink/DrinkRepository.dart';
 import 'package:drink/SpecificDrink/bloc/DrinkBloc.dart';
@@ -108,50 +109,57 @@ Widget drinkScreen(DrinkClass drinkClass, BuildContext context) {
     ingredientList.add(drinkClass.drinks![0].strIngredient15);
   }
 
-  return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-    Stack(children: [
-      Image.network(drinkClass.drinks![0].strDrinkThumb!,
-          height: MediaQuery.of(context).size.height * 0.50,
-          width: double.maxFinite,
-          fit: BoxFit.fill, loadingBuilder: (context, child, loadingProgress) {
-        if (loadingProgress == null) {
-          return child;
-        }
-        return SizedBox(
-            height: MediaQuery.of(context).size.height / 3,
-            child: Center(
-                child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                        : null)));
-      }),
-      Positioned(
-          left: 16,
-          top: 36,
-          child: Container(decoration: const ShapeDecoration(color: Colors.grey,shape: CircleBorder()),
-            child: IconButton(padding: const EdgeInsets.all(0),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: const Icon(Icons.close, size: 32)),
-          ))
+  return SingleChildScrollView(
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Stack(fit: StackFit.passthrough,children: [
+        Image.network(drinkClass.drinks![0].strDrinkThumb!,
+            height: MediaQuery.of(context).size.height * 0.50,
+            width: double.maxFinite,
+            fit: BoxFit.cover, loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) {
+            return child;
+          }
+          return SizedBox(
+              height: MediaQuery.of(context).size.height / 3,
+              child: Center(
+                  child: CircularProgressIndicator(
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                              loadingProgress.expectedTotalBytes!
+                          : null)));
+        }),
+        Positioned(
+            left: 16,
+            top: 36,
+            child: Container(decoration: const ShapeDecoration(color: Colors.grey,shape: CircleBorder()),
+              child: IconButton(padding: const EdgeInsets.all(0),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.close, size: 32)),
+            )),
+        Positioned(left: 16,bottom: 16,right: 0,
+          child: SizedBox(width: double.maxFinite,
+              child: Text(drinkClass.drinks![0].strDrink!
+                ,style: TextStyle(fontSize: 32,fontWeight: FontWeight.bold),)),
+        )
+      ]),
+      const Padding(
+        padding: EdgeInsets.fromLTRB(16, 16, 0, 0),
+        child: Text("Ingredients",
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+      ),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+        child: ListView.builder(
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) {
+              return Text(ingredientList[index]);
+            },
+            itemCount: ingredientList.length),
+      )
     ]),
-    const Padding(
-      padding: EdgeInsets.fromLTRB(16, 16, 0, 0),
-      child: Text("Ingredients",
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-    ),
-    Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-      child: ListView.builder(
-          padding: EdgeInsets.zero,
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index) {
-            return Text(ingredientList[index]);
-          },
-          itemCount: ingredientList.length),
-    )
-  ]);
+  );
 }

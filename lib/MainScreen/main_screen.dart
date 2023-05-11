@@ -136,7 +136,7 @@ Widget horizontalCardList(
                             Image.network(list![index].strDrinkThumb!,
                                 width: imageWidth,
                                 height: imageHeight,
-                                fit: BoxFit.fill,
+                                fit: BoxFit.cover,
                                 loadingBuilder: (context, child, loadingProgress) {
                                   if (loadingProgress == null) {
                                     return child;
