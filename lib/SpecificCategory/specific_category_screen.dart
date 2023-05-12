@@ -259,7 +259,19 @@ Widget drinkScreenForDialog(
                       Navigator.pop(context);
                     },
                     icon: const Icon(Icons.close, size: 32)),
-              ))
+              )),
+          Positioned(
+            left: 16,
+            bottom: 16,
+            right: 0,
+            child: SizedBox(
+                width: double.maxFinite,
+                child: Text(
+                  drinkClass.drinks![0].strDrink!,
+                  style:
+                  const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                )),
+          )
         ]),
         Padding(
           padding: const EdgeInsets.only(bottom: 16),

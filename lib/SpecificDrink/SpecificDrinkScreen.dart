@@ -61,7 +61,7 @@ class _SpecificDrinkScreenBodyState extends State<SpecificDrinkScreenBody> {
                           sizingInformation.isTablet) {
                         openBottomSheet(
                             context: context, drinkClass: _drinkClass);
-                      } else {}
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                         backgroundColor: buttonColor,
