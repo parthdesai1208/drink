@@ -223,60 +223,100 @@ Widget drinkScreenForDialog(
   if (drinkClass.drinks![0].strIngredient15 != null) {
     ingredientList.add(drinkClass.drinks![0].strIngredient15);
   }
+  var stepList = getSteps(drinkClass: drinkClass);
 
   return SizedBox(
-    width: MediaQuery.of(context).size.width * 0.25,
-    height: double.maxFinite,
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Stack(children: [
-        Image.network(drinkClass.drinks![0].strDrinkThumb!,
-            width: double.maxFinite,
-            height: MediaQuery.of(context).size.height / 2,
-            fit: BoxFit.cover,
-            loadingBuilder: (context, child, loadingProgress) {
-          if (loadingProgress == null) {
-            return child;
-          }
-          return SizedBox(
-              height: MediaQuery.of(context).size.height / 3,
-              child: Center(
-                  child: CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              loadingProgress.expectedTotalBytes!
-                          : null)));
-        }),
-        Positioned(
-            right: 16,
-            // left: 16,
-            top: 16,
-            child: Container(
-              decoration: const ShapeDecoration(
-                  color: Colors.grey, shape: CircleBorder()),
-              child: IconButton(
-                  padding: const EdgeInsets.all(0),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  icon: const Icon(Icons.close, size: 32)),
-            ))
+    width: MediaQuery.of(context).size.width * 0.50,
+    child: SingleChildScrollView(
+      child: Column( children: [
+        Stack(children: [
+          Image.network(drinkClass.drinks![0].strDrinkThumb!,
+              width: double.maxFinite,
+              height: MediaQuery.of(context).size.height / 2,
+              fit: BoxFit.cover,
+              loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              return child;
+            }
+            return SizedBox(
+                height: MediaQuery.of(context).size.height / 3,
+                child: Center(
+                    child: CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes!
+                            : null)));
+          }),
+          Positioned(
+              right: 16,
+              top: 16,
+              child: Container(
+                decoration: const ShapeDecoration(
+                    color: Colors.grey, shape: CircleBorder()),
+                child: IconButton(
+                    padding: const EdgeInsets.all(0),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: const Icon(Icons.close, size: 32)),
+              ))
+        ]),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 16),
+          child: SizedBox(width: double.maxFinite,
+            child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,crossAxisAlignment: CrossAxisAlignment.start,children: [
+              Flexible(flex: 1,
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(16, 16, 0, 0),
+                    child: Text("Ingredients",
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                  ),
+                  SizedBox(//height: MediaQuery.of(context).size.height,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                      child: ListView.builder(
+                          padding: EdgeInsets.zero,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return Text(ingredientList[index]);
+                          },
+                          itemCount: ingredientList.length),
+                    ),
+                  )
+                ]),
+              ),
+              Flexible(flex: 1,
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
+                  const Padding(
+                    padding: EdgeInsets.fromLTRB(16, 16, 0, 0),
+                    child: Text("Steps",
+                        style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 32),
+                    child: ListView.builder(
+                        padding: EdgeInsets.zero,
+                        shrinkWrap: true,
+                        // physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            child: ListTile(
+                                leading: Text((index + 1).toString()),
+                                title: Text(stepList[index])),
+                          );
+                        },
+                        itemCount: stepList.length),
+                  )
+                ]),
+              ),
+            ]),
+          ),
+        )
+
       ]),
-      const Padding(
-        padding: EdgeInsets.fromLTRB(16, 16, 0, 0),
-        child: Text("Ingredients",
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-      ),
-      Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-        child: ListView.builder(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              return Text(ingredientList[index]);
-            },
-            itemCount: ingredientList.length),
-      )
-    ]),
+    ),
   );
 }
