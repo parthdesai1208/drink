@@ -8,6 +8,9 @@ class CategoryBloc extends Bloc<CategoryEvent,CategoryState>{
 
     CategoryBloc(this.categoryRepository) : super(CategoryLoadingState()){
       on<CategoryLoadEvent>(_onCategoryLoadEvent);
+      on<OnPageChangedEvent>((event, emit) {
+          emit(OnPageChangedState(event.index));
+      });
     }
 
     void _onCategoryLoadEvent(CategoryLoadEvent event,Emitter<CategoryState> emit) async {

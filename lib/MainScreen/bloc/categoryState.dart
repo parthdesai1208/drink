@@ -1,4 +1,3 @@
-
 import '../../data.dart';
 
 import 'package:equatable/equatable.dart';
@@ -22,4 +21,16 @@ class CategoryErrorState extends CategoryState with EquatableMixin{
 
   @override
   List<Object?> get props => [error];
+}
+
+class OnPageChangedState extends CategoryState with EquatableMixin{
+
+  final int currentPage;
+
+  OnPageChangedState(this.currentPage);
+
+
+  @override
+  List<Object?> get props => [currentPage];
+
 }
