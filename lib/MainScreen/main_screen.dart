@@ -157,7 +157,7 @@ Widget horizontalCardList(
                             Positioned(
                                 left: 8,
                                 right: 8,
-                                top: imageHeight - 50,
+                                top: imageHeight * 0.90,
                                 bottom: 8,
                                 child: Wrap(
                                   children: [
