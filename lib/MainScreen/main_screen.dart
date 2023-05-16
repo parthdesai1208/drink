@@ -80,61 +80,123 @@ List<Widget> commonCardListWrapper(
 Widget carouselSliderWidget(
     CategoryWiseDrinks categoryWiseDrinks, BuildContext context) {
   var carouselCardData = categoryWiseDrinks.drinks;
+  var list = carouselCardData?.take(5).toList() ?? [];
   var imageWidth = MediaQuery.of(context).size.width * 0.95;
   var imageHeight = MediaQuery.of(context).size.height * 0.50;
-  var currentPos = 0;
 
   return Padding(
       padding: const EdgeInsets.only(top: 16),
-      child: Stack(
-        children: [
-                  CarouselSlider(
-            items: carouselCardData!
-                  .take(3)
-                  .map((e) => Card(
-                        margin: const EdgeInsets.symmetric(horizontal: 8),
-                        elevation: 5,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16.0),
-                        ),
-                        child: Image.network(e.strDrinkThumb!,
-                            width: imageWidth,
+      child: BlocProvider(
+        create: (context) =>
+            CategoryBloc(CategoryRepository())..add(OnPageChangedEvent(0)),
+        child: BlocBuilder<CategoryBloc, CategoryState>(
+            builder: (BuildContext context, state) {
+          if (state is OnPageChangedState) {
+            return Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                    Flexible(
+                      flex: 2,
+                      child: Text(categoryWiseDrinks.category,
+                          overflow: TextOverflow.ellipsis,
+                          style:
+                          const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                    ),
+                    Flexible(
+                      flex: 1,
+                      child: TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => SpecificCategoryScreen(
+                                        categoryWiseDrinks: categoryWiseDrinks)));
+                          },
+                          child: const Text("View All",
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: Colors.grey))),
+                    )
+                  ]),
+                ),
+                Stack(
+                  children: [
+                    CarouselSlider(
+                        items: list.map((e) => Card(
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 8),
+                                  elevation: 5,
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(16.0),
+                                  ),
+                                  child: Image.network(e.strDrinkThumb!,
+                                      width: imageWidth,
+                                      height: imageHeight,
+                                      fit: BoxFit.cover, loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                    if (loadingProgress == null) {
+                                      return child;
+                                    }
+                                    return SizedBox(
+                                      width: imageWidth,
+                                      height: imageHeight,
+                                      child: Center(
+                                          child: CircularProgressIndicator(
+                                              value: loadingProgress
+                                                          .expectedTotalBytes !=
+                                                      null
+                                                  ? loadingProgress
+                                                          .cumulativeBytesLoaded /
+                                                      loadingProgress
+                                                          .expectedTotalBytes!
+                                                  : null)),
+                                    );
+                                  }),
+                                ))
+                            .toList(),
+                        options: CarouselOptions(
+                            onPageChanged: (index, reason) {
+                              context
+                                  .read<CategoryBloc>()
+                                  .add(OnPageChangedEvent(index));
+                            },
+                            viewportFraction: 1.0,
                             height: imageHeight,
-                            fit: BoxFit.cover,
-                            loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
-                          }
-                          return SizedBox(
-                            width: imageWidth,
-                            height: imageHeight,
-                            child: Center(
-                                child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes !=
-                                            null
-                                        ? loadingProgress.cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
-                                        : null)),
-                          );
-                        }),
-                      ))
-                  .toList(),
-            options: CarouselOptions(onPageChanged: (index, reason) {
-
-            },
-                  viewportFraction: 1.0,
-                  height: imageHeight,
-                  autoPlay: false,
-                  autoPlayAnimationDuration: const Duration(seconds: 5),
-                  enableInfiniteScroll: false)),
-                  Positioned(right: 8,bottom: 8,
-                    child: Row(mainAxisAlignment: MainAxisAlignment.end,children: carouselCardData.take(3).map((e) {
-                      var index = carouselCardData.indexOf(e);
-                    return Container(decoration: BoxDecoration(shape: BoxShape.circle,color: currentPos == index ? Colors.grey : Colors.white));
-                    }).toList()),
-                  )
-                ],
+                            autoPlay: false,
+                            autoPlayAnimationDuration:
+                                const Duration(seconds: 5),
+                            enableInfiniteScroll: false)),
+                    Positioned(
+                      right: 16,
+                      bottom: 16,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: list.map((e) {
+                            var index = list.indexOf(e);
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 3.0),
+                              child: Container(
+                                  width: 12,
+                                  height: 12,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: state.currentPage == index
+                                          ? Colors.black
+                                          : Colors.white)),
+                            );
+                          }).toList()),
+                    )
+                  ],
+                ),
+              ],
+            );
+          } else {
+            return Container();
+          }
+        }),
       ));
 }
 
